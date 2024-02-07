@@ -1,0 +1,138 @@
+<main class="wrapper">
+	<h1 class="title">Услуги</h1>
+	<div class="default-table">
+		<table>
+			<thead>
+				<tr>
+					<th>Наименование</th>
+					<th>Цена</th>
+					<th>Ед. измерения</th>
+				</tr>
+			</thead>
+			<tbody id="tBody">
+        {'download_services_table' | snippet}
+			</tbody>
+		</table>
+    <p>Для изменения нажмите на поле и введите новое значение. Сохранение производится автоматически при потере фокуса.</p>
+    <p>Для удаления поля сотрите название услуги.</p>
+    <p>Для добавления:</p>
+    <div>
+      <input class="default-input" type="text" name="name" id="name-of-a-service" placeholder="Название товара">
+      <input class="default-input" type="text" name="price" id="price-of-a-service" placeholder="Цена товара">
+      <input class="default-input" type="text" name="measure" id="measure-of-a-service" placeholder="Единица измерения">
+      <button id="button-to-add-service" class="default-input">✓</button>
+    </div>
+    <p id="status"></p>
+	</div>
+	<div class="separator"></div>
+</main>
+<script>
+'use strict';
+// Обновление и удаление позиций
+function updateDB(id) {
+  // Собираем инфу со сработавшего поля
+  const curRow = document.getElementById('service-' + id);
+  let curRowName = curRow.querySelector('.name').innerHTML;
+  let curRowPrice = curRow.querySelector('.price').innerHTML;
+  let curRowMeasure = curRow.querySelector('.measure').innerHTML;
+  // Contenteditable -- очень удобно для пользователей,
+  // но оно имеет привычку вставлять <br> в конце. Сразу чистим
+  curRowName = curRowName.substr(-4) === '<br>'
+    ? curRowName.substr(0, curRowName.length - 4)
+    : curRowName;
+  curRowPrice = curRowPrice.substr(-4) === '<br>'
+    ? curRowPrice.substr(0, curRowPrice.length - 4)
+    : curRowPrice;
+  curRowMeasure = curRowMeasure.substr(-4) === '<br>'
+    ? curRowMeasure.substr(0, curRowMeasure.length - 4)
+    : curRowMeasure;
+
+  postToServer(JSON.stringify({
+    type: 'update',
+    id: id,
+    name: curRowName,
+    price: curRowPrice,
+    measure: curRowMeasure
+  }));
+}
+
+// Добавление позиций
+document.getElementById('button-to-add-service')
+  .addEventListener('mouseup', addToDB);
+function addToDB() {
+  // Собираем инфу
+  const name = document.getElementById('name-of-a-service');
+  const price = document.getElementById('price-of-a-service');
+  const measure = document.getElementById('measure-of-a-service');
+  const status = document.getElementById('status');
+
+  // Проверка заполнения
+  if (!name.value.trim()) {
+    status.innerHTML = 'Введите название услуги';
+    return false;
+  }
+  if (!price.value.trim()) {
+    status.innerHTML = 'Введите цену услуги';
+    return false;
+  }
+  if (!measure.value.trim()) {
+    status.innerHTML = 'Введите ед. измерения услуги';
+    return false;
+  }
+
+  // Шлём на сервер
+  postToServer(JSON.stringify({
+    type: 'add',
+    name: name.value,
+    price: price.value,
+    measure: measure.value
+  }));
+
+  // Стираем поля
+  name.value = '';
+  price.value = '';
+  measure.value = '';
+}
+
+function postToServer(jsonData, buildTable = false) {
+  // Работа с сервером
+	const req = new XMLHttpRequest();
+	const status = document.getElementById('status');
+
+	req.onreadystatechange = function() { 
+		if (req.readyState == 4) {
+      if (req.statusText === 'OK') {
+        status.innerHTML = 'Соединение с БД установлено';
+      }
+
+			if (req.status == 200) {
+        if (buildTable) {
+          document.getElementById('tBody').innerHTML = req.responseText;
+          return;
+        } else if (req.responseText) {
+          status.innerHTML = "Статус: " + req.responseText;
+        } else {
+          status.innerHTML = '';
+        }
+        // Перерисовываем таблицу. На всякий случай целиком,
+        // т.к. с ней могут работать другие пользователи.
+        // В идеале нужно через код сравнить нынешнюю страницу
+        // и перерисовать только те поля, что изменились,
+        // чтобы не использовать тяжёлые DOM операции лишний раз,
+        // но я сильно спешил ¯\_(ツ)_/¯
+        postToServer(JSON.stringify({
+          type: 'build',
+        }), true);
+			} else {
+        status.innerHTML = 'Ошибка, ответ сервера:', req.status;
+      }
+		}
+	}
+
+	req.open('POST', '/assets/template-murrey-default/snippets/db-functions.php');
+  req.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+
+  req.send(jsonData);
+	status.innerHTML = 'Ожидаю ответ сервера...';
+}
+</script>

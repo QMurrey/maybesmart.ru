@@ -1,0 +1,39 @@
+<!-- FOOTER -->
+<footer class="footer">
+	<div class="wrapper flex space-between align-bottom">
+		<div itemscope itemtype="http://schema.org/Organization">
+			<p class="title-font bold" itemprop="name"><span class="text-2xl">MAYBE<span class="highlight">SMART</span></span></p>
+			<p>
+				<a href="tel:{$_modx->config.number_short}" class="text-1xl" itemprop="telephone">{$_modx->config.number_fancy}</a>
+				<br><span itemprop="email">{$_modx->config.org_email}</span>
+			</p>
+			<p itemprop="address">{$_modx->config.org_address}</p>
+			<p class="jur-info highlight text-sm">{$_modx->config.owner_name}&emsp;{$_modx->config.org_inn}</p>
+		</div>
+		<ul class="list-style-none footer-links flex flex-wrap space-between tablet-hidden">
+      {'!getImageList' | snippet : [
+    	  'tvname' => 'nav_menu',
+    	  'tpl' => 'nav_in_footer_on_pc_tpl',
+				'docid' => 1
+		  ]}
+    </ul>
+		<ul class="list-style-none footer-links text-sm mobile-visible flex flex-wrap space-between">
+      {'!getImageList' | snippet : [
+    	  'tvname' => 'nav_menu',
+    	  'tpl' => 'nav_in_footer_on_mobile_tpl',
+				'docid' => 1
+		  ]}
+    </ul>
+		<div>
+			<button class="default-input highlight">Подписаться на рассылку</button>
+			<div class="footer-soc-webs flex flex-wrap space-between align-center">
+				<a href="{$_modx->config.soc_vk}" class="footer-soc-web icon-vk" target="_blank" title="Группа ВК"></a>
+				<a href="{$_modx->config.soc_yt}" class="footer-soc-web icon-yt" target="_blank" title="Канал Ютуб"></a>
+				<a href="{$_modx->config.soc_tg}" class="footer-soc-web icon-tg" target="_blank" title="Группа Телеграмма"></a>
+			</div>
+			<p class="footer-soc-webs__desc text-sm">мы в социальных сетях</p>
+		</div>
+	</div>
+</footer>
+</body>
+</html>

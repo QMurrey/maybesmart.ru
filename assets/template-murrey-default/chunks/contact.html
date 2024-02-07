@@ -1,0 +1,25 @@
+<section id="contact" class="contact">
+	<div class="wrapper flex flex-wrap space-between">
+		<h2 class="hidden">Контакты <span class="text-2xl">{$_modx->config.org_name}</span></h2>
+		<p class="contact__desc text-2xl title-font bold">
+			Оставьте свои контакты
+			<br>и персональный менеджер свяжется с Вами
+		</p>
+		<form class="contact-form">
+			<div class="conctact-form-top">
+				<div>
+					<input class="default-input" type="text" name="name" placeholder="Ваше имя">
+					<input class="default-input" type="text" name="phone" placeholder="Телефон">
+					<input class="default-input" type="text" name="email" placeholder="E-mail">
+				</div>
+				<textarea class="default-input" placeholder="Комментарий"></textarea>
+			</div>
+			<div class="conctact-form-bottom">
+				<input id='agreed-to-terms' class="default-checkbox" type="checkbox" name="agreed-to-terms" checked='checked'>
+				<label for='agreed-to-terms'></label>
+				<span class="text-sx pointer" onclick="document.getElementById('agreed-to-terms').checked = !document.getElementById('agreed-to-terms').checked">Я согласен с условиями обработки персональных данных</span>
+				<button class="default-input default-input-fill">Отправить</button>
+			</div>
+		</form>
+	</div>
+</section>
