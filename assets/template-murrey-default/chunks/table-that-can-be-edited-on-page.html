@@ -10,22 +10,35 @@
 				</tr>
 			</thead>
 			<tbody id="tBody">
-        {'download_services_table' | snippet}
+        {if $_modx->user.id > 0 && $_modx->isMember('Administrator')}
+          {'download_services_table' | snippet : [
+            'editable' => "contenteditable='true'"
+          ]}
+        {else}
+          {'download_services_table' | snippet : [
+            'editable' => "contenteditable='false'"
+          ]}
+        {/if}
 			</tbody>
 		</table>
-    <p>Для изменения нажмите на поле и введите новое значение. Сохранение производится автоматически при потере фокуса.</p>
-    <p>Для удаления поля сотрите название услуги.</p>
-    <p>Для добавления:</p>
-    <div>
-      <input class="default-input" type="text" name="name" id="name-of-a-service" placeholder="Название товара">
-      <input class="default-input" type="text" name="price" id="price-of-a-service" placeholder="Цена товара">
-      <input class="default-input" type="text" name="measure" id="measure-of-a-service" placeholder="Единица измерения">
-      <button id="button-to-add-service" class="default-input">✓</button>
-    </div>
+    {if $_modx->user.id > 0 && $_modx->isMember('Administrator')}
+      <p>Для изменения нажмите на поле и введите новое значение. Сохранение производится автоматически при потере фокуса.</p>
+      <p>Для удаления поля сотрите название услуги.</p>
+      <p>Для добавления:</p>
+      <div>
+        <input class="default-input" type="text" name="name" id="name-of-a-service" placeholder="Название товара">
+        <input class="default-input" type="text" name="price" id="price-of-a-service" placeholder="Цена товара">
+        <input class="default-input" type="text" name="measure" id="measure-of-a-service" placeholder="Единица измерения">
+        <button id="button-to-add-service" class="default-input">✓</button>
+      </div>
+    {else}
+      <p>Войдите как администратор, чтобы получить доступ к изменению таблицы.</p>
+    {/if}
     <p id="status"></p>
 	</div>
 	<div class="separator"></div>
 </main>
+{if $_modx->user.id > 0 && $_modx->isMember('Administrator')}
 <script>
 'use strict';
 // Обновление и удаление позиций
@@ -136,3 +149,4 @@ function postToServer(jsonData, buildTable = false) {
 	status.innerHTML = 'Ожидаю ответ сервера...';
 }
 </script>
+{/if}
